@@ -193,7 +193,16 @@ if run:
 
     df = pd.DataFrame(rows)
     money_cols = ["Premium In","Prem Charge","Reward","Policy Fee","Holiday Charge","Base COI","CI COI","ECI COI","Total Charges","Net Alloc","Net Growth","End Account Value","Net Debt (NLG)"]
-    styled = df.style.format({c: lambda x: f"{x:,.0f}" for c in money_cols}).hide_index()
+    styled = df.style.format({c: "{:,.0f}".format for c in money_cols})
+# Hide the index (new + old pandas compatible)
+try:
+    styled = styled.hide(axis="index")       # pandas >= 1.4
+except Exception:
+    try:
+        styled = styled.hide_index()         # older pandas fallback
+    except Exception:
+        pass
+
     st.subheader("Yearly Projection")
     st.dataframe(styled, use_container_width=True, height=520)
 
